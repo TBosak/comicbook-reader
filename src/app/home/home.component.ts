@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   imageURL = '';
   zip = new JSZip();
   pages: Array<any> = [];
+  tempDir = '';
 
   constructor(public electron: ElectronService){
   }
@@ -23,6 +24,7 @@ export class HomeComponent implements OnInit {
   }
 
   async onFileSelected(event: any){
+    if(this.tempDir) this.electron.fs.rmSync(this.tempDir, { recursive: true });
     this.pages = [];
     if(event.target.files[0].path.endsWith('.cbr')){
       this.handleCBR(event.target.files[0]);
@@ -48,6 +50,7 @@ handleCBZ(file: File){
 
 handleCBR(file: File){
     this.electron.fs.mkdtemp('comics', (err, folder) => {
+      this.tempDir = folder;
       this.electron.childProcess.exec(`unrar x "${file.path}" -op ${folder}`, (error, stdout, stderr) => {
         this.electron.fs.promises.readdir(`${folder}`, { withFileTypes: true})
         .then(dirents => {this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true}).then((files) => {

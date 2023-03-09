@@ -1,9 +1,12 @@
 <div class="container">
-  <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
-  </h1>
-
-  <input type="file" (change)="onFileSelected($event)" #fileUpload>
-  <input type="submit">
-  <img style="height: 50%; width: 50%;" (click)="next()" #comic>
+  <header>…</header>
+  <div fxLayout="row" class="content">
+    <nav fxFlexAlign="start">
+      <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+      <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
+    </nav>
+    <img fxFlexAlign="center" (click)="next()" #comic>
+    <aside fxFlexAlign="end">…</aside>
+  </div>
+  <footer>…</footer>
 </div>

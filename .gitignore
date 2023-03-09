@@ -12,6 +12,7 @@ src/**/*.js
 *.js.map
 /app/storage/**
 /app/storage/*
+/release
 
 # dependencies
 node_modules
