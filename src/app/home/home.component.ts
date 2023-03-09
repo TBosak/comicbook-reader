@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   title = 'app';
   imageURL = '';
   zip = new JSZip();
-  pages: Array<string> = [];
+  pages: Array<any> = [];
 
   constructor(public electron: ElectronService){
   }
@@ -23,9 +23,43 @@ export class HomeComponent implements OnInit {
   }
 
   async onFileSelected(event: any){
+    this.pages = [];
+    if(event.target.files[0].path.endsWith('.cbr')){
+      this.handleCBR(event.target.files[0]);
+    }
+    if(event.target.files[0].path.endsWith('.cbz')){
+      this.handleCBZ(event.target.files[0]);
+    }
+  }
+
+handleCBZ(file: File){
+  file.arrayBuffer().then((buffer) => {
+    this.zip.loadAsync(buffer).then((zip) => {
+      zip.forEach((relativePath, zipEntry) => {
+        zipEntry.async('blob').then((blob) => {
+          if(!zipEntry.dir || blob.size > 0) this.pages.push({file: zipEntry.name, blob: URL.createObjectURL(blob)});
+          this.pages = this.pages.sort((a, b) => a.file.localeCompare(b.file));
+          this.comic.nativeElement.src = this.pages[0].blob;
+        });
+      });
+    });
+  });
+}
+
+handleCBR(file: File){
     this.electron.fs.mkdtemp('comics', (err, folder) => {
-      console.log(folder);
-      this.electron.childProcess.exec(`unrar x "${event.target.files[0].path}" -op ${folder}`, (error, stdout, stderr) => {
+      this.electron.childProcess.exec(`unrar x "${file.path}" -op ${folder}`, (error, stdout, stderr) => {
+        this.electron.fs.promises.readdir(`${folder}`, { withFileTypes: true})
+        .then(dirents => {this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true}).then((files) => {
+          files.sort().forEach((comic) => {
+            this.electron.fs.readFile(`${folder}/${dirents[0].name}/${comic.name}`,(exc,buffer)=>{
+              this.pages.push({ file: comic.name, blob: URL.createObjectURL(new Blob([buffer]))});
+              this.pages = this.pages.sort((a, b) => a.file.localeCompare(b.file));
+              this.comic.nativeElement.src = this.pages[0].blob;
+            });
+          });
+        });
+      });
         if (error) {
           console.error(`error: ${error.message}`);
           return;
@@ -37,16 +71,20 @@ export class HomeComponent implements OnInit {
         console.log(`stdout:\n${stdout}`);
       });
     });
-  // const file: File = event.target.files[0];
-  // file.arrayBuffer().then((buffer) => {
-  //   this.zip.loadAsync(buffer).then((zip) => {
-  //     zip.forEach((relativePath, zipEntry) => {
-  //       zipEntry.async('blob').then((blob) => {
-  //         if(!zipEntry.dir || blob.size > 0) this.pages.push(URL.createObjectURL(blob));
-  //         this.comic.nativeElement.src = this.pages[0];
-  //       });
-  //     });
-  //   });
-  // });
   }
+
+  next(){
+    const index = this.pages.findIndex((page) => page.blob === this.comic.nativeElement.src);
+    if(index < this.pages.length - 1){
+      this.comic.nativeElement.src = this.pages[index + 1].blob;
+    }
+  }
+
+  previous(){
+    const index = this.pages.findIndex((page) => page.blob === this.comic.nativeElement.src);
+    if(index > 0){
+      this.comic.nativeElement.src = this.pages[index - 1].blob;
+    }
+  }
+
 }
