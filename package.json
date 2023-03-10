@@ -109,9 +109,5 @@
   },
   "browserslist": [
     "chrome 110"
-  ],
-  "extraFiles": [
-    "storage/**/*",
-    "comics/*"
   ]
 }

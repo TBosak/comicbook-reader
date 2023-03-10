@@ -14,6 +14,9 @@
             "filter": ["**/*"]
         }
     ],
+    "extraFiles": [
+      "UnRAR.exe"
+    ],
     "win": {
         "icon": "dist/assets/icons",
         "target": [

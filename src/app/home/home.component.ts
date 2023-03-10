@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable curly */
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as JSZip from 'jszip';
 import { ElectronService } from '../core/services';
 import { Dirent } from 'fs';
@@ -10,7 +10,7 @@ import { Dirent } from 'fs';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('comic', { static: false }) comic!: ElementRef;
   title = 'app';
   imageURL = '';
@@ -24,7 +24,12 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy(): void {
+    if(this.tempDir) this.electron.fs.rmSync(this.tempDir, { recursive: true });
+  }
+
   async onFileSelected(event: any){
+    if(event.target.files[0]){
     if(this.tempDir) this.electron.fs.rmSync(this.tempDir, { recursive: true });
     this.pages = [];
     if(event.target.files[0].path.endsWith('.cbr')){
@@ -34,6 +39,7 @@ export class HomeComponent implements OnInit {
       this.handleCBZ(event.target.files[0]);
     }
   }
+}
 
 handleCBZ(file: File){
   file.arrayBuffer().then((buffer) => {
@@ -55,14 +61,15 @@ handleCBR(file: File){
       this.electron.childProcess.exec(`unrar x "${file.path}" -op ${folder}`, (error, stdout, stderr) => {
         this.electron.fs.promises.readdir(`${folder}`, { withFileTypes: true})
         .then(dirents => {
-          if(!dirents[0].isFile){ this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true})
-          .then((files) => {
-          files.sort().forEach((comic) => {
-            this.electron.fs.readFile(`${folder}/${dirents[0].name}/${comic.name}`,(exc,buffer)=>{
-              this.pages.push({ file: comic.name, blob: URL.createObjectURL(new Blob([buffer]))});
-              this.pages = this.pages.sort((a, b) => a.file.localeCompare(b.file));
-              this.comic.nativeElement.src = this.pages[0].blob;
-            });
+          if(!dirents[0].isFile()){
+            this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true})
+            .then((files) => {
+            files.sort().forEach((comic) => {
+              this.electron.fs.readFile(`${folder}/${dirents[0].name}/${comic.name}`,(exc,buffer)=>{
+                this.pages.push({ file: comic.name, blob: URL.createObjectURL(new Blob([buffer]))});
+                this.pages = this.pages.sort((a, b) => a.file.localeCompare(b.file));
+                this.comic.nativeElement.src = this.pages[0].blob;
+              });
           });
         });
       }
