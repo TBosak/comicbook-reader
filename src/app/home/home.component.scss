@@ -1,20 +1,23 @@
-.container{
-  height: 100vh;
-  width: 100vw;
+.container {
+    height: 100vh;
+    width: 100vw;
 }
 
-.content{
-  height: 100%;
-  width: 100%;
+.content {
+    height: 100%;
+    width: 100%;
 }
 
-nav, aside{
-  min-width: 10rem;
-  height: 100%;
-  display: flex;
-  vertical-align: middle;
+nav,
+aside {
+    width: 10rem;
+    height: 100%;
+    display: flex;
+    vertical-align: middle;
 }
 
-img{
-  width: 100%;
+img {
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
 }

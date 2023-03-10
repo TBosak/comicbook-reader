@@ -1,12 +1,12 @@
 <div class="container">
-  <header>…</header>
-  <div fxLayout="row" class="content">
-    <nav fxFlexAlign="start">
-      <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
-      <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
-    </nav>
-    <img fxFlexAlign="center" (click)="next()" #comic>
-    <aside fxFlexAlign="end">…</aside>
-  </div>
-  <footer>…</footer>
+    <header>…</header>
+    <div fxLayout="row" class="content">
+        <nav fxFlexAlign="start">
+            <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
+        </nav>
+        <img fxFlexAlign="center" (click)="next()" #comic>
+        <aside fxFlexAlign="end">…</aside>
+    </div>
+    <footer>…</footer>
 </div>

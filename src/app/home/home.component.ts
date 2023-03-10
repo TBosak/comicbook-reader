@@ -3,6 +3,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import * as JSZip from 'jszip';
 import { ElectronService } from '../core/services';
+import { Dirent } from 'fs';
 
 @Component({
   selector: 'app-home',
@@ -53,7 +54,9 @@ handleCBR(file: File){
       this.tempDir = folder;
       this.electron.childProcess.exec(`unrar x "${file.path}" -op ${folder}`, (error, stdout, stderr) => {
         this.electron.fs.promises.readdir(`${folder}`, { withFileTypes: true})
-        .then(dirents => {this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true}).then((files) => {
+        .then(dirents => {
+          if(!dirents[0].isFile){ this.electron.fs.promises.readdir(`${folder}/${dirents[0].name}`, { withFileTypes: true})
+          .then((files) => {
           files.sort().forEach((comic) => {
             this.electron.fs.readFile(`${folder}/${dirents[0].name}/${comic.name}`,(exc,buffer)=>{
               this.pages.push({ file: comic.name, blob: URL.createObjectURL(new Blob([buffer]))});
@@ -62,6 +65,16 @@ handleCBR(file: File){
             });
           });
         });
+      }
+      else{
+        dirents.sort().forEach((comic) => {
+          this.electron.fs.readFile(`${folder}/${comic.name}`,(exc,buffer)=>{
+            this.pages.push({ file: comic.name, blob: URL.createObjectURL(new Blob([buffer]))});
+            this.pages = this.pages.sort((a, b) => a.file.localeCompare(b.file));
+            this.comic.nativeElement.src = this.pages[0].blob;
+          });
+        });
+      }
       });
         if (error) {
           console.error(`error: ${error.message}`);
