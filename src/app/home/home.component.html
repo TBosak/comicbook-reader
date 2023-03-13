@@ -2,13 +2,20 @@
     <!-- <header>…</header> -->
     <div fxLayout="row" class="content">
         <nav fxLayout="column" fxFlexAlign="start">
-            <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+            <button type="button" mat-raised-button color="primary" (click)="fileInput.click()">Choose File</button>
             <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
-            <button mat-raised-button (click)="next()">Next Page</button>
-            <button mat-raised-button (click)="previous()">Previous Page</button>
+            <button mat-raised-button color="accent" (click)="next()">Next Page</button>
+            <button mat-raised-button color="accent" (click)="previous()">Previous Page</button>
         </nav>
-        <img fxFlexAlign="center" (click)="next()" #comic>
-        <aside fxFlexAlign="end">…</aside>
+        <img fxFlexAlign="center" (click)="enlarge()" #comic>
+        <aside fxFlexAlign="end">
+          <div fxLayout="column">
+            <p *ngIf="pages.length">Page {{getCurrentPage()+1}} of {{pages.length}}</p>
+            <div style="overflow:auto;">
+            <img [ngClass]="i === getCurrentPage() ? 'current' : ''" class="panels" *ngFor="let image of pages; let i = index" (click)="setPage(i)" [src]="sanitizer.bypassSecurityTrustUrl(image.blob)">
+            </div>
+          </div>
+        </aside>
     </div>
-    <!-- <footer>…</footer> -->
+    <div id="fullpage" #fullPage (click)="close()"></div>
 </div>

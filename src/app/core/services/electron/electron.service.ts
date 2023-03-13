@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 import { ipcRenderer, webFrame } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
+import * as util from 'util';
+import * as path from 'path';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,8 @@ export class ElectronService {
   webFrame: typeof webFrame;
   childProcess: typeof childProcess;
   fs: typeof fs;
+  util: typeof util;
+  path: typeof path;
 
   constructor() {
     // Conditional imports
@@ -22,8 +26,9 @@ export class ElectronService {
       this.webFrame = window.require('electron').webFrame;
 
       this.fs = window.require('fs');
-
+      this.util = window.require('util');
       this.childProcess = window.require('child_process');
+      this.path = window.require('path');
       this.childProcess.exec('node -v', (error, stdout, stderr) => {
         if (error) {
           console.error(`error: ${error.message}`);

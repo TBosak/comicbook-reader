@@ -27,3 +27,27 @@ img {
     max-height: 75%;
     margin: auto;
 }
+
+#fullpage {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-size: contain;
+  background-repeat: no-repeat no-repeat;
+  background-position: center center;
+  background-color: black;
+}
+
+.current{
+  background: red;
+  box-shadow: 0 0 50px red;
+}
+
+.panels:hover{
+  cursor: pointer;
+  border: 1px solid #4b4b4b;
+}
