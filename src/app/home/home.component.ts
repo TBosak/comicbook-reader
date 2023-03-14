@@ -3,7 +3,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as JSZip from 'jszip';
 import { ElectronService } from '../core/services';
-import { Dirent } from 'fs';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -54,7 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 }
 
 async handleCBZ(file: File){
-  file.arrayBuffer().then((buffer) => {
+  await file.arrayBuffer().then((buffer) => {
     this.zip.loadAsync(buffer).then((zip) => {
       const promises = [];
       zip.forEach((relativePath, zipEntry) => {
