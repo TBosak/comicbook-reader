@@ -22,10 +22,15 @@ button{
   position: block;
 }
 
-img {
-    max-width: 75%;
-    max-height: 75%;
-    margin: auto;
+#mainImg {
+    max-width: 75vw;
+    max-height: 75vh;
+}
+
+img{
+  max-width: 75%;
+  max-height: 75%;
+  margin: auto;
 }
 
 #fullpage {
@@ -50,4 +55,8 @@ img {
 .panels:hover{
   cursor: pointer;
   border: 1px solid #4b4b4b;
+}
+
+button[disabled="true"]{
+  color: lightgray;
 }

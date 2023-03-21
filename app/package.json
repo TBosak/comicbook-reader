@@ -1,9 +1,8 @@
 {
-  "name": "angular-electron",
-  "description": "Angular Electron sample",
+  "name": "comic-book-reader",
+  "description": "Basic comic book reader",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Tim Barani"
   },
   "version": "12.0.0",
   "main": "main.js",

@@ -1,20 +1,35 @@
 <div class="container">
     <div fxLayout="row" class="content">
-        <nav fxLayout="column" fxFlexAlign="start">
-            <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
-            <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
-            <button mat-raised-button (click)="next()">Next Page</button>
-            <button mat-raised-button (click)="previous()">Previous Page</button>
-        </nav>
-        <img fxFlexAlign="center" (click)="enlarge()" #comic>
-        <aside fxFlexAlign="end">
-            <div fxLayout="column">
-                <p *ngIf="pages.length">Page {{getCurrentPage()+1}} of {{pages.length}}</p>
-                <div style="overflow:auto;">
-                    <img loading="lazy" [ngClass]="i === getCurrentPage() ? 'current' : ''" class="panels" *ngFor="let image of pages; let i = index" (click)="setPage(i)" [src]="sanitizer.bypassSecurityTrustUrl(image.blob)">
-                </div>
+      <nav fxLayout="column" fxFlexAlign="start">
+        <button type="button" mat-icon-button (click)="fileInput.click()">
+          <mat-icon>folder_open</mat-icon>
+        </button>
+        <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file">
+      </nav>
+      <main fxFlex="auto" fxLayout="row" fxFlexAlign="center" fxLayoutAlign="center center">
+        <button *ngIf="pages.length" [disabled]="getCurrentPage() === 0" fxFlex="auto" style="height:100%;" mat-icon-button (click)="previous()">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <img id="mainImg" (click)="enlarge()" #comic>
+        <button *ngIf="pages.length" [disabled]="pages.length === getCurrentPage()+1" fxFlex="auto" style="height:100%;" mat-icon-button (click)="next()">
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+      </main>
+      <aside fxFlexAlign="end">
+        <div fxLayout="column">
+          <ng-container *ngIf="pages.length">
+            <p>Page
+              <b>{{getCurrentPage()+1}}</b> of
+              <b>{{pages.length}}</b>
+            </p>
+            <div style="overflow:auto;">
+              <img loading="lazy" [ngClass]="{'current': i === getCurrentPage()}" class="panels"
+                *ngFor="let image of pages; let i = index; trackBy: imgByBlob" (click)="setPage(i)"
+                [src]="sanitizer.bypassSecurityTrustUrl(image.blob)">
             </div>
-        </aside>
+          </ng-container>
+        </div>
+      </aside>
     </div>
     <div id="fullpage" #fullPage (click)="close()"></div>
-</div>
+  </div>

@@ -12,6 +12,7 @@ function createWindow(): BrowserWindow {
 
   // Create the browser window.
   win = new BrowserWindow({
+    icon: path.join(__dirname, 'book.png'),
     x: 0,
     y: 0,
     width: size.width,

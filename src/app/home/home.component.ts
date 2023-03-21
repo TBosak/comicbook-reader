@@ -148,4 +148,8 @@ async handleCBR(file: File) {
   close(){
     this.fullPage.nativeElement.style.display = 'none';
   }
+
+  imgByBlob(index, img) {
+    return img.blob;
+  }
 }
